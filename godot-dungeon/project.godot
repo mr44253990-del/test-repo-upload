@@ -6,8 +6,8 @@ config_version=5
 
 [application]
 
-config/name="Dungeon Maze"
-config/description="A procedurally generated first-person 3D dungeon maze."
+config/name="Rakib"
+config/description="Rakib — a procedurally generated 3D dungeon maze with orbit camera, coins, health and traps."
 run/main_scene="res://scenes/Splash.tscn"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
@@ -17,6 +17,7 @@ config/icon="res://icon.svg"
 Settings="*res://scripts/Settings.gd"
 GameState="*res://scripts/GameState.gd"
 SceneSwitcher="*res://scripts/SceneSwitcher.gd"
+Audio="*res://scripts/Audio.gd"
 
 [display]
 

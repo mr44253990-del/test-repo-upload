@@ -9,6 +9,10 @@ const GAME_SCENE := "res://scenes/Game.tscn"
 @onready var _percent: Label = $Center/VBox/Percent
 @onready var _tip: Label = $Center/VBox/Tip
 @onready var _stage: Label = $Center/VBox/Stage
+@onready var _spinner: TextureRect = $Center/VBox/SpinnerHolder/Spinner
+@onready var _title: Label = $Title
+
+var _t := 0.0
 
 var _tips := [
 	"Tip: Press F to toggle your flashlight.",
@@ -30,7 +34,14 @@ func _ready() -> void:
 		_stage.text = "Failed to start loading (err %d)" % err
 
 
-func _process(_delta: float) -> void:
+func _process(delta: float) -> void:
+	# Animate spinner + pulsing title regardless of load state.
+	_t += delta
+	if _spinner:
+		_spinner.rotation = _t * 4.0
+	if _title:
+		_title.modulate.a = 0.7 + 0.3 * sin(_t * 3.0)
+
 	if _done:
 		return
 	var status := ResourceLoader.load_threaded_get_status(GAME_SCENE, _progress)

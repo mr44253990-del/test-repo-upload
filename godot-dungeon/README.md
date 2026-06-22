@@ -1,8 +1,19 @@
-# Dungeon Maze — Godot 4 First-Person Game
+# RAKIB — Godot 4 Third-Person Maze Game
 
-A complete, ready-to-run **Godot 4** starter game with the full flow you asked for:
+A complete, ready-to-run **Godot 4** game with the full flow:
 
-**Splash screen → Main Menu → Settings/Play → Loading screen → First-person 3D dungeon maze.**
+**Splash screen → Main Menu → Settings/Play → Loading screen → Third-person 3D dungeon maze.**
+
+### Features
+- **Orbit camera** on a SpringArm3D — rotate freely with the mouse, and the
+  camera automatically pulls in so it **never passes through walls**.
+- **Procedural maze** rebuilt each run (rooms, loops, hidden passages).
+- **Coins** to collect + an end **reward** score; **keys** to unlock the exit.
+- **Player health** bar, **health pickups**, **traps** (damage + send to start)
+  and **death → full restart** of the maze.
+- **All sounds generated in code** (coins, keys, steps, jump/land, traps, win,
+  death, UI clicks) plus an ambient music drone — no audio files needed.
+- Stamina sprint, jump, toggleable flashlight, pause menu with live settings.
 
 The maze is **procedurally generated** every run: hundreds of interconnected
 cells, open rooms, looping passages (braided dead-ends), traps, scattered keys
@@ -38,12 +49,15 @@ each time and configurable in size and difficulty.
 | Sprint | `Shift` (uses stamina) |
 | Jump | `Space` |
 | Flashlight | `F` |
+| Rotate camera | Mouse (orbits, wall-safe) |
 | Pause / menu | `Esc` |
 
 ## Objective
 
-Collect **all keys**, then reach the glowing **green portal** to escape.
-Stepping on a red **trap** plate sends you back to the start. Your time is tracked.
+Collect **all keys** (and grab **coins** for a bigger reward), then reach the
+glowing **green portal** to escape. Red **traps** deal damage and send you to
+the start; if your **health** hits zero the whole maze **restarts**. Pick up
+red **health crates** to heal. Your time and coins are scored at the exit.
 
 ## Project structure
 

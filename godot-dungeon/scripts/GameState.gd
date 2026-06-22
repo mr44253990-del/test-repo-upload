@@ -9,6 +9,7 @@ var difficulty: int = Difficulty.NORMAL
 var maze_size: int = 16          # grid is maze_size x maze_size cells
 var collected_keys: int = 0
 var total_keys: int = 0
+var coins: int = 0
 var start_time_ms: int = 0
 
 
@@ -16,6 +17,7 @@ func new_run(custom_seed: int = -1) -> void:
 	maze_seed = custom_seed if custom_seed >= 0 else randi()
 	collected_keys = 0
 	total_keys = 0
+	coins = 0
 	start_time_ms = Time.get_ticks_msec()
 
 

@@ -23,6 +23,8 @@ var player_spawn: Vector3
 var exit_position: Vector3
 var key_positions: Array[Vector3] = []
 var trap_positions: Array[Vector3] = []
+var coin_positions: Array[Vector3] = []
+var health_positions: Array[Vector3] = []
 
 
 func cell_to_world(cx: int, cy: int) -> Vector3:
@@ -159,8 +161,44 @@ func _build_features() -> void:
 		trap_positions.append(p)
 		_spawn_trap(p)
 
+	# Coins: scatter along several cells (skip start/exit).
+	coin_positions.clear()
+	var coin_cells := _pick_cells(maze.width * maze.height / 6, [maze.start_cell, maze.exit_cell])
+	for c in coin_cells:
+		var p := cell_to_world(c.x, c.y) + Vector3(0, 0.9, 0)
+		coin_positions.append(p)
+		_spawn_coin(p)
+
+	# Health pickups: a few rarer ones.
+	health_positions.clear()
+	var hp_cells := _pick_cells(max(2, maze.width / 4), [maze.start_cell, maze.exit_cell])
+	for c in hp_cells:
+		var p := cell_to_world(c.x, c.y) + Vector3(0, 0.9, 0)
+		health_positions.append(p)
+		_spawn_health(p)
+
 	# Exit portal
 	_spawn_exit(cell_to_world(maze.exit_cell.x, maze.exit_cell.y))
+
+
+func _pick_cells(count: int, exclude: Array) -> Array[Vector2i]:
+	var pool: Array[Vector2i] = []
+	var ex := {}
+	for e in exclude:
+		ex[e] = true
+	for y in maze.height:
+		for x in maze.width:
+			var c := Vector2i(x, y)
+			if not ex.has(c):
+				pool.append(c)
+	# Seeded Fisher-Yates so placement is reproducible from the maze seed.
+	for i in range(pool.size() - 1, 0, -1):
+		var j := maze.rng.randi_range(0, i)
+		var tmp := pool[i]
+		pool[i] = pool[j]
+		pool[j] = tmp
+	var result: Array[Vector2i] = pool.slice(0, clampi(count, 0, pool.size()))
+	return result
 
 
 func _spawn_key(pos: Vector3) -> void:
@@ -195,6 +233,67 @@ func _spawn_key(pos: Vector3) -> void:
 
 	# Slow spin + bob via a property tween started by the Game scene's process.
 	area.set_meta("spin", true)
+
+
+func _spawn_coin(pos: Vector3) -> void:
+	var area := Area3D.new()
+	area.position = pos
+	area.add_to_group("coins")
+	add_child(area)
+
+	var mesh := MeshInstance3D.new()
+	var coin := CylinderMesh.new()
+	coin.top_radius = 0.28
+	coin.bottom_radius = 0.28
+	coin.height = 0.06
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(1.0, 0.82, 0.15)
+	m.metallic = 0.9
+	m.roughness = 0.25
+	m.emission_enabled = true
+	m.emission = Color(1.0, 0.7, 0.1)
+	m.emission_energy_multiplier = 0.8
+	coin.material = m
+	mesh.mesh = coin
+	mesh.rotation.x = PI * 0.5   # stand the coin upright
+	area.add_child(mesh)
+
+	var col := CollisionShape3D.new()
+	var sphere := SphereShape3D.new()
+	sphere.radius = 0.7
+	col.shape = sphere
+	area.add_child(col)
+
+
+func _spawn_health(pos: Vector3) -> void:
+	var area := Area3D.new()
+	area.position = pos
+	area.add_to_group("health")
+	add_child(area)
+
+	var mesh := MeshInstance3D.new()
+	var box := BoxMesh.new()
+	box.size = Vector3(0.5, 0.5, 0.5)
+	var m := StandardMaterial3D.new()
+	m.albedo_color = Color(0.9, 0.15, 0.2)
+	m.emission_enabled = true
+	m.emission = Color(1.0, 0.1, 0.2)
+	m.emission_energy_multiplier = 1.5
+	box.material = m
+	mesh.mesh = box
+	area.add_child(mesh)
+
+	var light := OmniLight3D.new()
+	light.light_color = Color(1.0, 0.3, 0.3)
+	light.omni_range = 4.0
+	light.light_energy = 1.0
+	area.add_child(light)
+
+	var col := CollisionShape3D.new()
+	var sphere := SphereShape3D.new()
+	sphere.radius = 0.9
+	col.shape = sphere
+	area.add_child(col)
 
 
 func _spawn_trap(pos: Vector3) -> void:

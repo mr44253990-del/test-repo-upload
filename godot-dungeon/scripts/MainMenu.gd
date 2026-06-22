@@ -25,16 +25,20 @@ func _ready() -> void:
 
 
 func _on_play_pressed() -> void:
+	Audio.play("click")
 	_play_panel.show()
 
 
 func _on_settings_pressed() -> void:
+	Audio.play("click")
 	_settings_panel.show()
 
 
 func _on_credits_pressed() -> void:
+	Audio.play("click")
 	_credits_panel.show()
 
 
 func _on_quit_pressed() -> void:
+	Audio.play("click")
 	get_tree().quit()
